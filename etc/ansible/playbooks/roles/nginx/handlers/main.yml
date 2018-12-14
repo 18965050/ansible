@@ -1,0 +1,3 @@
+---
+- name: start nginx     #notify下面指定的内容在name这里定义
+  command: /app/nginx/sbin/nginx

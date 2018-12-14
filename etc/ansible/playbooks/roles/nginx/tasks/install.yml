@@ -1,0 +1,64 @@
+---
+- name: groupadd nginx   #创建组，存在则忽略，group模块   - name:说明
+  group:
+    name: "{{ group }}"
+    gid: 888
+
+- name: useradd nginx   #创建用户，存在则忽略，user模块
+  user:
+    name: "{{ user }}"
+    group: "{{ group }}"
+    uid: 888
+    createhome: no
+    shell: /sbin/nologin
+
+- name: install pcre-devel  #安装依赖，package模块
+  package:
+    name: pcre-devel
+    state: latest
+
+- name: install openssl-devel  #安装依赖,package模块
+  package:
+    name: openssl-devel
+    state: latest
+
+- name: create /tools    #创建目录,file模块
+  file:
+    path: /tools
+    state: directory
+
+- name: copy and extract nginx tarball  #解压压缩包，unarchive模块
+  unarchive:
+    src: "{{ tarball_name }}"
+    dest: /tools
+
+- name: ./configure         #检查环境，command模块
+  command: ./configure --user={{ user }} --group={{ group }} --prefix=/app/{{ nginx_dir }} --with-http_stub_status_module --with-http_ssl_module
+  args:
+    chdir: /tools/{{ nginx_dir }}
+
+- name: make    #编译，command模块
+  command: make
+  args:
+    chdir: /tools/{{ nginx_dir }}
+
+- name: make install    #安装，command模块
+  command: make install
+  args:
+    chdir: /tools/{{ nginx_dir }}
+
+- name: modify nginx configuration   #修改配置文件，template模块
+  template:
+    src: "{{ nginx_configuration }}"
+    dest: /app/{{ nginx_dir }}/conf/nginx.conf
+
+- name: make link     #创建软连接，file模块
+  file:
+    src: /app/{{ nginx_dir }}
+    dest: /app/nginx
+    state: link
+
+- name: test nginx   #测试nginx配置,command模块
+  command: /app/nginx/sbin/nginx -t
+  notify:              #调用handlers目录下的main.yml
+    - start nginx

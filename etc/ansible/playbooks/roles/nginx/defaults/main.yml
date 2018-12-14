@@ -1,0 +1,6 @@
+user: nginx
+group: nginx
+tarball_name: nginx-1.12.1.tar.gz
+nginx_configuration: nginx.conf.j2
+nginx_dir: nginx-1.12.1
+nginx_port: 2223             #这是我们刚才在模板文件中使用的变量
