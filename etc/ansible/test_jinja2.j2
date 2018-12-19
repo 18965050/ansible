@@ -1,0 +1,92 @@
+{# 特殊字符使用 #}
+{{  '{{' }}
+{{  '}}' }}
+{{ '{{ test string }}' }}
+{{ '{% test string %}' }}
+{{ '{# test string #}' }}
+
+{# raw使用 #}
+{% raw %}
+{{ test }}
+{% test %}
+{# test #}
+{% if %}
+{% for %}
+{% endraw %}
+
+{# 使用variable_start_string和variable_end_string来替换默认的{{和}}#}
+
+{# 使用block_start_string和block_end_string来替换默认的{%和%} #}
+
+{# 宏定义 #}
+{% macro testfunc() %}
+    test string
+{% endmacro %}
+
+{{ testfunc() }}
+
+{# 传参宏定义 #}
+{% set testvar1='teststr1' %}
+{% set testvar2=2 %}
+
+{% macro testfunc(tv1,tv2) %}
+    test string
+    {{tv1}}
+    {{tv2}}
+{% endmacro %}
+
+{{ testfunc(testvar1,testvar2) }}
+
+{# 带默认参数的宏,默认值需从最后一个参数开始 #}
+{% macro testfunc(tv1,tv2,tv3=3,tv4=4) %}
+    test string
+    {{tv1}}
+    {{tv2}}
+    {{tv3}}
+    {{tv4}}
+{% endmacro %}
+
+{{ testfunc( 'aa','a' ) }}
+
+{# include #}
+test...................
+test...................
+{% include 'test1.j2' %}
+
+{# import #}
+{% macro testfunc() %}
+    test function
+    {% for i in varargs %}
+        {{ i }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro testfunc1(tv1=1) %}
+    {{tv1}}
+{% endmacro %}
+
+{# another j2#}
+{% import 'function_lib.j2' as funclib %}
+something in test.j2
+{{ funclib.testfunc(1,2,3) }}
+
+something in test.j2
+{{ funclib.testfunc1('aaaa') }}
+
+{# extend #}
+# cat test.j2
+something in test.j2...
+something in test.j2...
+{% block test %}
+    Some of the options that might be replaced
+{% endblock %}
+something in test.j2...
+something in test.j2...
+
+# cat test1.j2
+{% extends 'test.j2' %}
+
+{% block test %}
+    aaaaaaaaaaaaaa
+    11111111111111
+{% endblock %}

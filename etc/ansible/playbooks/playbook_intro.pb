@@ -1,4 +1,5 @@
 ---
 - hosts: web
   tasks:
-    - command: echo "aa"
+    - name: test command
+      command: echo "aa"
